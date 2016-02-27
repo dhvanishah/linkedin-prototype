@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= title %></title>
+    <link rel="icon" href="https://static.licdn.com/scds/common/u/images/logos/favicons/v1/favicon.ico">
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+    <link rel='stylesheet', href='/css/bootstrap.css'/>
+    <link rel='stylesheet', href='/css/bootstrap.min.css'/>
+     <link rel='stylesheet' href='/stylesheets/main.css' />
+   
+    <script src='http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js'/>
+    <script src='./js/bootstrap.min.js'></script>
+    <script src='./js/bootstrap.js'></script>
+    
+	
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.20/angular.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.20/angular-route.js"></script>
+	
+ <script src='./angular/routes.js' ></script> 
+ 
+  </head>
+ <body style="padding:0px" ng-app="test" >
+<div class="panel panel-primary">
+	<div id="header" class="header">
+		<div id="header-upper" >
+			<div class="wrapper container-fluid" style="padding:3px">
+				<span class="col-md-3"><img name="logo" id="logo" src="/images/logo.png" style="margin-left:50%" /></span>
+					<span class="header-first-child col-md-5">
+						<span class="input-prepend">
+								<input id="txtSearch" value="" ng-model="searchtxt" class="span2" style="width:85%;padding:8px" type="text" placeholder="Search for people, jobs, companies, and more...">
+							</span>
+					<button class="btn btn-primary" onclick="search()"><i class="glyphicon glyphicon-search"></i></button>
+				</span>
+				<span class="header-second-child col-md-4"">
+					<ul style="margin-top:6px">
+						<li><a href="#"><i class="glyphicon glyphicon-envelope"></i></a></li>
+						<div class="btn-group" style="margin-top: -6px; color: #337ab7">
+							<i class="glyphicon glyphicon-flag dropdown-toggle" data-toggle="dropdown" aria-expanded="false"></i>
+							<span id="noInvitations" class="badge" style="position: relative; top: -15px; left: -3px;background-color: red;color: #fff;"></span>
+						  <ul class="dropdown-menu list-group" role="menu" id="divInvitations" style="width:300px">
+						  </ul>
+						</div>
+						<div class="btn-group" style="margin-top: -6px; color: #337ab7">
+							<i class="glyphicon glyphicon-user dropdown-toggle" data-toggle="dropdown" aria-expanded="false"></i>
+						  <ul class="dropdown-menu" role="menu">
+						    <li><a href="#/logout" onclick="logout()">Sign Out</a></li>
+						  </ul>
+						</div>
+						
+					</ul>
+				</span>		
+			</div>
+		</div>	<div id="header-lower" class="container-fluid" style="color:#ffffff;background-color:#1a1a1a;height:25px;background-image=-moz-linear-gradient(center top , #1a1a1a 0%, #303030 100%);z-index:1">
+			<div class="wrapper" class="col-md-6" style="margin-left:30%">
+				<ul>
+					<li><a href="#/home">Home</a></li>
+					<li><a href="#/profile">Profile</a></li>
+					<li><a href="#/connections">Connections</a></li>
+				</ul>
+			</div>
+		</div>
+		<div class="header-bottom">Avg Offer for JS: $137k - Software devs are in-demand. Let 2,000+ tech companies compete for you.| <a href="">Read More >> </a>
+</div>
+		</div>
+	
+	<script type="text/ng-template" id="connections.html">
+		<div class="media main-body" id="divConnection">
+			
+			<h3>
+				<div role="alert" class="alert alert-success">Connections</div>
+			</h3>
+			<div class="blk" ng-repeat="con in connections">
+			
+				<div class="container-fluid">
+					<div><label>Email: </label><span>{{con.email}}</span></div>
+					<div><label>Name: </label><span>{{con.firstname}} {{con.lastname}}</span></div>
+				</div>
+				
+			</div>
+		</div>
+		
+	</script>
+	<script type="text/ng-template" id="search.html">
+		<div class="media main-body" id="divSearch">
+			<h3>Search Results: </h3>
+			
+			<div class="blk" ng-repeat="searchitem in searchdata" ng-if="searchitem.userunkid != usermasterdata[0].userunkid">
+			
+				<div class="container-fluid" >
+				
+				<!--
+				myid: {{(usermasterdata[0].userunkid)}}
+				invitations: {{searchitem.invitations}}
+				requested: {{searchitem.requested}}
+				connections: {{searchitem.connections}}
+				check invitations: {{(searchitem.invitations).indexOf(usermasterdata[0].userunkid)}}
+				check requested: {{(searchitem.requested).indexOf(usermasterdata[0].userunkid)}}
+				check connection: {{(searchitem.connections).indexOf(usermasterdata[0].userunkid)}}
+				--> 
+				
+					<div class="pull-right" ng-if="(searchitem.invitations).indexOf(usermasterdata[0].userunkid) == '-1' 
+								&& (searchitem.requested).indexOf(usermasterdata[0].userunkid) == '-1' 
+								&& (searchitem.connections).indexOf(usermasterdata[0].userunkid) == '-1'">
+						<button name="btnInvite" class="btn btn-primary" ng-click="invite(this)">Invite</button>
+					</div>
+					<div class="pull-right" ng-if="(searchitem.requested).indexOf(usermasterdata[0].userunkid) != '-1' && (searchitem.connections).indexOf(usermasterdata[0].userunkid) == '-1'  ">
+						<button name="btnAccept" class="btn btn-primary" ng-click="accept(this)">Accept</button>
+					</div>
+					<div class="pull-right" ng-if="(searchitem.connections).indexOf(usermasterdata[0].userunkid) != '-1'">
+						<button name="btnConnected" class="btn btn-primary">Connected</button>
+					</div>
+					<div class="pull-right" ng-if="(searchitem.invitations).indexOf(usermasterdata[0].userunkid) != '-1'">
+						<button name="btnRequested" class="btn btn-primary">Invite Sent</button>
+					</div>
+				
+				<div><label>Email: </label><span>{{searchitem.email}}</span></div>
+				<div><label>Name: </label><span>{{searchitem.firstname}} {{searchitem.lastname}}</span></div>
+				
+			</div>
+		</div>
+	</script>
+	<script type="text/ng-template" id="home.html">
+			<div class="media main-body" id="divProfile" style="height:100%">
+				<div class="media-left">
+			    	
+			    	<div style="width:190px;height:190px">
+			      		<img style="width:190px;height:190px" id="imgUser" class="media-object" src="{{homeuserdata.image}}" alt="..."> <!-- /images/noimage.png-->
+			    	</div>
+			  	</div>
+  				<div class="media-body">
+    				<h3 class="media-heading">Welcome {{homeuserdata.firstname + " " + homeuserdata.lastname}}</h3>
+    				<h5 style="color:green;font-weight:bold">Last login: <%=lastlogin%></h5>
+    			</div>
+    			<div class="container-fluid" style="margin-top:3%;padding:10px">
+    				<h4>Summary</h4>
+    				<p>{{homeuserdata.summary}}{{homeuserdata.summary}}</p>
+    			</div>
+			</div> 
+	
+	</script>
+	<script type="text/ng-template" id="profile.html">
+		<div class="main-body">
+			<div class="media" id="divProfile">
+				<div class="media-left">
+					<input id="fileupload" name="fileupload" type="file" style="height: 193px;opacity: -1;position: fixed;top: 142px;width: 192px;" />
+					
+			    	<div style="width:190px;height:190px">
+			      	<img style="width:190px;height:190px" id="imgUser" class="media-object" src="{{userdetails.image}}" alt="..."> <!-- /images/noimage.png-->
+			    	</div>
+			  	</div>
+  				<div class="media-body">
+  				{{education}}
+    				<h3 class="media-heading">
+    					<div id="divFullName">
+    						{{userdetails.firstname + " " + userdetails.lastname}}
+    						<button class="btn" ng-click="editName()"><i class="glyphicon glyphicon-pencil"></i></button>
+    					</div>
+    					<div class="container-fluid" id="divEditName" style="display:none">
+	    					<div class="col-md-5"><input style="width:175px" type="text" name="txtFName" value="" ng-model="userdetails.firstname" /></div>
+	    					<div class="col-md-5"><input style="width:175px" type="text" name="txtLName" value="" ng-model="userdetails.lastname" /></div>
+	    					<div class="col-md-12" style="padding:20px">
+	    						<button class="btn" ng-click="saveName()">Save</button>
+	    						<button class="btn" ng-click="cancelName()">Cancel</button>
+	    					</div>
+	    				</div>
+    					
+    				</h3>
+    				<div id="divSummary">
+    					<button ng-if="userdetails.summary != null" class="btn pull-right" ng-click="editSummary()"><i class="glyphicon glyphicon-pencil"></i></button>
+    					<p ng-if="userdetails.summary != null">{{userdetails.summary}}</p>
+    					<button style="margin-left:3%" class="btn btn-summary" ng-if="userdetails.summary == null" ng-click="editSummary()">Add Summary</button>
+    				</div>
+    				<div style="display:none" id="divEditSummary">
+    					<textarea type="text" name="txtSummary" ng-model="userdetails.summary" value="{userdetails.summary}"></textarea>
+    					<div style="padding:20px">
+	    						<button class="btn" ng-click="saveSummary()">Save</button>
+	    						<button class="btn" ng-click="cancelSummary()">Cancel</button>
+	    					</div>
+    				</div>
+    			</div>
+			</div>
+			
+			<div class="media" id="divEducation">
+				<div>
+				    <h3>
+				    	<div class="alert alert-success" role="alert">
+				    		Education
+				    		<button type="button" class="btn btn-primary" style="float:right" title="Click to add a new education" ng-click="addEducation()" data-toggle="modal" data-target="#divEditEducation">Add Education</button>
+				    	</div>
+				    </h3> 
+				</div>
+				
+				<div ng-repeat="education in educationdata">
+				
+				  <div class="entity-container panel panel-body" ng-if="education.educationunkid != '' && education.educationunkid != 'undefined' && education.educationunkid != null">
+					<div class="education">
+				        	<header>
+					            <h4><span class="field-text">{{education.school}}</span></h4>
+				            	<h5>
+				            		 <button class="btn btn-primary pull-right" id="btnEducationDelete" type="button" data-id={{education.educationunkid}} ng-click="deleteEducation(this)"><i class="glyphicon glyphicon-trash"></i></button>
+				            		 <button type="button" style="margin-right:10px" class="btn btn-primary pull-right" id="btnEducationEdit" type="button" data-toggle="modal" data-target="#divEditEducation" data-id={{education.educationunkid}} ng-click="editEducation(this)"><i class="glyphicon glyphicon-pencil"></i></button>
+				            		 
+					              <span><span class="degree">{{education.degree}} </span>
+					              <span>{{education.field}}</span></span>
+					            </h5>
+					            <div><label>Activities: </label><span>{{education.activities}} </span></div>
+					            <div><label>Description: </label><span>{{education.description}} </span></div>
+					         </header>
+					         <span>
+					            <time>{{education.startdate}}</time>
+					            <time> &ndash; {{education.enddate}}</time>
+				            </span>
+				  	</div>
+				 </div>
+				
+			</div>
+		</div>
+		<!-- START -->
+		<div class="modal fade" id="divEditEducation" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		  <div class="modal-dialog">
+		    <div class="modal-content">
+		      <div class="modal-header">
+		        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+		        <h4 class="modal-title" id="myModalLabel">Update Education</h4>
+		      </div>
+		      <div class="modal-body" style="height: 500px;overflow: auto;">
+		        <ul>
+					  <li id="row-school-typeahead">
+					    <div><label id="lblSchool" for="">School*</label></div>
+					    <div class="fieldgroup"><span class="error"></span><span>
+					      <input type="text" name="txtSchool" id="txtSchool" ng-model="editEducationObj.school" size="32" value="{{ editEducationObj.school }}">
+					    </div>
+					  </li>
+					   <li>
+						    <fieldset class="hidden-labels">
+						    <legend>
+						    	<label>Dates Attended</label>
+						    </legend>
+						    
+						    <div class="fieldgroup"><span class="error"></span>
+						      <div><label>Start Year</label></div>
+						      <input type="text" name="txtStartDate" ng-model="editEducationObj.startdate" id="txtStartDate" size="10" value="{{ editEducationObj.startdate }}" />
+						      <span class="to">&nbsp;&ndash;&nbsp;</span><span  class="error"></span>
+						      <label class="hidden-label">End Year</label>
+						      <input type="text" name="txtEndDate" id="txtEndDate" ng-model="editEducationObj.enddate" size="10" value="{{ editEducationObj.enddate }}"/>
+						      <span class="note">Or expected graduation year</span></div>
+						    </fieldset>
+						  </li>
+						   <li>
+						    <div class="fieldgroup"><span class="error"></span>
+						      <div><label>Degree</label></div>
+						      <input type="text" name="txtDegree" id="txtDegree" ng-model="editEducationObj.degree" value="{{ editEducationObj.degree }}" />
+						    </div>
+						  </li>
+						  <li>
+						   
+						    <div class="fieldgroup"><span class="error"></span>
+						     <div><label>Field of Study</label></div>
+						      <input type="text" autocomplete="off" maxlength="100" size="32" id="txtField" name="txtField" ng-model="editEducationObj.field" value="{{ editEducationObj.field }}" >
+						    </div>
+						  </li>
+						  <li id="row-grade-typeahead">
+						    <div class="fieldgroup"><span class="error"></span>
+						    	<div><div><label>Grade</label></div>
+						      <input type="text" maxlength="80" size="32" id="txtGrade" name="txtGrade" 
+						      ng-model="editEducationObj.grade" value="{{ editEducationObj.grade }}">
+						    </div>
+						  </li>
+						   <li>						    
+						    <div class="fieldgroup"><span class="error"></span>
+						      <div><label>Activities and Societies</label></div>
+						      <textarea cols="60" rows="3" id="txtActivity" name="txtActivity" ng-model="editEducationObj.activities">{{ editEducationObj.activities }}</textarea>
+						    </div>
+						    <p class="note">Examples: Alpha Phi Omega, Chamber Chorale, Debate Team</p>
+						  </li>
+						  <li>
+						    
+						    <div class="fieldgroup"><span class="error"></span>
+						    	<div><label>Description</label></div>
+						      <textarea cols="60" rows="6" id="txtDesc" name="txtDesc" ng-model="editEducationObj.description">{{ editEducationObj.description }}</textarea>
+						    </div>
+						  </li>
+					 </ul>
+		      </div>
+		      <div class="modal-footer">
+		        <button type="button" class="btn btn-primary"  ng-click="saveEducation()">Save</button>
+				<button class="btn" data-dismiss="modal" ng-click="cancelEducation()">Cancel</button>
+		      </div>
+		    </div>
+		  </div>
+		</div>
+
+		<!-- END -->
+			<div class="media" id="divEditEducation123" style="display:none">
+			<input type="hidden" name="editeducationid" id="editeducationid" value="{{ editEducationObj.educationunkid }}" />
+				<div>
+				    <h3>
+					    <div role="alert" class="alert alert-success">
+					    	Education
+					    </div>
+				    </h3> 
+				</div>
+	  			<div class="media-body">
+	  		
+	  			<div>
+				  
+				  <ul>
+					  <li id="row-school-typeahead">
+					    <div><label id="lblSchool" for="">School*</label></div>
+					    <div class="fieldgroup"><span class="error"></span><span>
+					      <input type="text" name="txtSchool" id="txtSchool" ng-model="editEducationObj.school" size="32" value="{{ editEducationObj.school }}">
+					    </div>
+					  </li>
+					   <li>
+						    <fieldset class="hidden-labels">
+						    <legend>
+						    	<label>Dates Attended</label>
+						    </legend>
+						    
+						    <div class="fieldgroup"><span class="error"></span>
+						      <div><label>Start Year</label></div>
+						      <input type="text" name="txtStartDate" ng-model="editEducationObj.startdate" id="txtStartDate" size="10" value="{{ editEducationObj.startdate }}" />
+						      <span class="to">&nbsp;&ndash;&nbsp;</span><span  class="error"></span>
+						      <label class="hidden-label">End Year</label>
+						      <input type="text" name="txtEndDate" id="txtEndDate" ng-model="editEducationObj.enddate" size="10" value="{{ editEducationObj.enddate }}"/>
+						      <span class="note">Or expected graduation year</span></div>
+						    </fieldset>
+						  </li>
+						   <li>
+						    <div class="fieldgroup"><span class="error"></span>
+						      <div><label>Degree</label></div>
+						      <input type="text" name="txtDegree" id="txtDegree" ng-model="editEducationObj.degree" value="{{ editEducationObj.degree }}" />
+						    </div>
+						  </li>
+						  <li>
+						   
+						    <div class="fieldgroup"><span class="error"></span>
+						     <div><label>Field of Study</label></div>
+						      <input type="text" autocomplete="off" maxlength="100" size="32" id="txtField" name="txtField" ng-model="editEducationObj.field" value="{{ editEducationObj.field }}" >
+						    </div>
+						  </li>
+						  <li id="row-grade-typeahead">
+						    <div class="fieldgroup"><span class="error"></span>
+						    	<div><div><label>Grade</label></div>
+						      <input type="text" maxlength="80" size="32" id="txtGrade" name="txtGrade" 
+						      ng-model="editEducationObj.grade" value="{{ editEducationObj.grade }}">
+						    </div>
+						  </li>
+						   <li>						    
+						    <div class="fieldgroup"><span class="error"></span>
+						      <div><label>Activities and Societies</label></div>
+						      <textarea cols="60" rows="3" id="txtActivity" name="txtActivity" ng-model="editEducationObj.activities">{{ editEducationObj.activities }}</textarea>
+						    </div>
+						    <p class="note">Examples: Alpha Phi Omega, Chamber Chorale, Debate Team</p>
+						  </li>
+						  <li>
+						    
+						    <div class="fieldgroup"><span class="error"></span>
+						    	<div><label>Description</label></div>
+						      <textarea cols="60" rows="6" id="txtDesc" name="txtDesc" ng-model="editEducationObj.description">{{ editEducationObj.description }}</textarea>
+						    </div>
+						  </li>
+					 </ul>
+				</div>
+	  				
+					 <div class="container-fluid" style="padding:15px">
+						<div class="col-md-7">
+							<button class="btn btn-primary" ng-click="saveEducation()">Save</button>
+							<button class="btn" ng-click="cancelEducation()">Cancel</button>
+						</div>
+					</div>
+	    		</div>
+			</div>
+			
+			<div class="media" id="divJob">
+				<div>
+				    <h3>
+					    <div class="alert alert-success" role="alert">
+					    	Experience
+					    	<button type="button" class="btn btn-primary" style="float:right" ng-click="addJob()" data-toggle="modal" data-target="#divEditJob">Add Experience</button>
+					    </div>
+				    </h3> 
+				</div>
+				<div ng-repeat="job in jobdata">
+				  <div class="entity-container panel panel-body" ng-if="job.jobunkid != '' && job.jobunkid != 'undefined' && job.jobunkid != null">
+					<div class="education">
+				        	<header>
+					            <h4><span class="field-text">{{job.companyname}}</span></h4>
+				            	<h5>
+				            		 <button class="btn btn-primary pull-right" id="btnJobDelete" type="button" data-id={{job.jobunkid}} ng-click="deleteJob(this)"><i class="glyphicon glyphicon-trash"></i></button>
+				            		 <button style="margin-right:10px" class="btn btn-primary pull-right" id="btnJobEdit" type="button" data-id={{job.jobunkid}} ng-click="editJob(this)" data-toggle="modal" data-target="#divEditJob"><i class="glyphicon glyphicon-pencil"></i></button>
+				            		 
+					              <span><span class="degree">{{job.jobtitle}} </span>
+					             
+					            </h5>
+					            <div><label>Location:  </label><span>{{job.location}} </span></div>
+					            <div><label>Description:  </label><span>{{job.description}} </span></div>
+					         </header>
+					         <span>
+					            <time>{{job.startdate}}</time>
+					            <time> &ndash; {{job.enddate}}</time>
+				            </span>
+				  	</div>
+				 </div>
+				
+			</div>
+		</div>
+		<!-- STRAT -->
+		
+
+
+<!-- Modal -->
+<div class="modal fade" id="divEditJob" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Experience</h4>
+      </div>
+      <div class="modal-body">
+        <ul>
+					  <li id="row-school-typeahead">
+					    <div><label id="lblSchool" for="">Company Name*</label></div>
+					    <div class="fieldgroup"><span class="error"></span><span>
+					      <input type="text" name="txtCompany"  size="32" maxlength="100" ng-model="editJobObj.companyname" value="{{ editJobObj.companyname }}">
+					    </div>
+					  </li>
+					   <li id="row-school-typeahead">
+					    <div><label id="lblSchool" for="">Job Title</label></div>
+					    <div class="fieldgroup"><span class="error"></span><span>
+					      <input type="text" name="txtTitle"  size="32" maxlength="100" ng-model="editJobObj.jobtitle" value="{{ editJobObj.jobtitle }}>
+					    </div>
+					  </li>
+					   <li id="row-school-typeahead">
+					    <div><label id="lblSchool" for="">Location</label></div>
+					    <div class="fieldgroup"><span class="error"></span><span>
+					      <input type="text" name="txtLocaiton"  size="32" maxlength="100" ng-model="editJobObj.location" value="{{ editJobObj.location }}>
+					    </div>
+					  </li>
+					   <li>
+						    <fieldset class="hidden-labels">
+						    <legend>
+						    	<label>Dates Attended</label>
+						    </legend>
+						    <div class="fieldgroup"><span class="error"></span>
+						      <div><label>Start Year</label></div>
+						      <input type="text" name="txtStartDate" id="txtStartDate" size="10" ng-model="editJobObj.startdate" value="{{ editJobObj.startdate }} />
+						      <span class="to">&nbsp;&ndash;&nbsp;</span><span  class="error"></span>
+						      <label class="hidden-label" for="endYear-startEndYear-editEducationForm">End Year</label>
+						      <input type="text" name="txtEndDate" id="txtEndDate" size="10" ng-model="editJobObj.enddate" value="{{ editJobObj.enddate }} />
+						      <span class="note">Or expected graduation year</span></div>
+						    </fieldset>
+						  </li>
+						   <li>
+						    <div class="fieldgroup">
+						      <div><label>Description</label></div>
+						       <input type="text" name="txtDesc" ng-model="editJobObj.description" value="{{ editJobObj.description }}" />
+						    </div>
+						  </li>
+					 </ul>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary" ng-click="saveJob()" >Save</button>
+		<button class="btn"  data-dismiss="modal" data-dismiss="modal">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+		<!-- END -->
+			<div class="media" id="divEditJob123" style="display:none">
+				<h3 class="media-heading">Experience</h3>
+	  			<div class="media-body">
+	  				<ul>
+					  <li id="row-school-typeahead">
+					    <div><label id="lblSchool" for="">Company Name*</label></div>
+					    <div class="fieldgroup"><span class="error"></span><span>
+					      <input type="text" name="txtCompany"  size="32" maxlength="100" ng-model="editJobObj.companyname" value="{{ editJobObj.companyname }}">
+					    </div>
+					  </li>
+					   <li id="row-school-typeahead">
+					    <div><label id="lblSchool" for="">Job Title</label></div>
+					    <div class="fieldgroup"><span class="error"></span><span>
+					      <input type="text" name="txtTitle"  size="32" maxlength="100" ng-model="editJobObj.jobtitle" value="{{ editJobObj.jobtitle }}>
+					    </div>
+					  </li>
+					   <li id="row-school-typeahead">
+					    <div><label id="lblSchool" for="">Location</label></div>
+					    <div class="fieldgroup"><span class="error"></span><span>
+					      <input type="text" name="txtLocaiton"  size="32" maxlength="100" ng-model="editJobObj.location" value="{{ editJobObj.location }}>
+					    </div>
+					  </li>
+					   <li>
+						    <fieldset class="hidden-labels">
+						    <legend>
+						    	<label>Dates Attended</label>
+						    </legend>
+						    <div class="fieldgroup"><span class="error"></span>
+						      <div><label>Start Year</label></div>
+						      <input type="text" name="txtStartDate" id="txtStartDate" size="10" ng-model="editJobObj.startdate" value="{{ editJobObj.startdate }} />
+						      <span class="to">&nbsp;&ndash;&nbsp;</span><span  class="error"></span>
+						      <label class="hidden-label" for="endYear-startEndYear-editEducationForm">End Year</label>
+						      <input type="text" name="txtEndDate" id="txtEndDate" size="10" ng-model="editJobObj.enddate" value="{{ editJobObj.enddate }} />
+						      <span class="note">Or expected graduation year</span></div>
+						    </fieldset>
+						  </li>
+						   <li>
+						    <div class="fieldgroup">
+						      <div><label>Description</label></div>
+						      <input type="text" name="txtDesc" ng-model="editJobObj.description" value="{{ editJobObj.description }} />
+						    </div>
+						  </li>
+					 </ul>
+					 <div class="container-fluid" style="padding:15px">
+						<div class="col-md-7">
+							<button class="btn btn-primary" ng-click="saveJob()">Save</button>
+							<button class="btn">Cancel</button>
+						</div>
+					</div>
+	    		</div>
+			</div>
+			
+			
+			<div class="media last" id="divSkills">
+				<h3 class="">
+					<div class="alert alert-success" role="alert">
+						Skills
+						<button ng-click="editSkills()" class="btn btn-primary pull-right">Update Skills</button>
+					</div>
+					
+				</h3>
+	  			<div class="media-body panel panel-body" id="divSkillShow">
+	  			
+		  			<ul class="list-group" style="border:1px solid #cccccc">
+					  <li style="width:750px" class="list-group-item" ng-repeat="skill in skills" ng-if="skill.skill != '' && skill.skill != 'undefined' && skill.skill != null">{{skill.skill}}</li>
+					</ul>
+		  			
+					<!-- 
+					<div class="container-fluid">
+						<div class="col-md-7" style="padding:10px; margin-top:20px;">
+						 <span ng-repeat="skill in skills">
+							<div  ng-if="skill.skill != '' && skill.skill != 'undefined' && skill.skill != null">
+								<button><span>{{skill.skill}}</span></button>
+							</div>
+						</span>
+						</div>
+					</div>
+					-->
+					
+	    		</div>
+	    		<div class="media-body" id="divSkillEdit" style="display:none">
+		  			<div class="container-fluid">
+		  				<div class="input-group col-md-7">
+					  		<input class="form-control" type="text" name="txtSkills" ng-model="skilltext" placeholder="What are your areas of expertise?">
+					  		<span class="input-group-addon brn btn-primary" ng-click="addSkills()">Add</span>
+						</div>
+					</div>
+					<div class="container-fluid">
+						<div class="col-md-7" style="border:1px solid #cccccc; padding:10px; margin-top:20px;margin-bottom:50px">
+							 <span ng-repeat="skill in skills">
+								<span  ng-if="skill.skill != '' && skill.skill != 'undefined' && skill.skill != null">
+									<button ng-click="removeSkill(this)"><span>{{skill.skill}}</span><span style="color:red"> x </span></button>
+								</span>
+							</span>
+						</div>
+					<div class="container-fluid" style="padding:15px;">
+						<div class="col-md-7">
+							<button class="btn btn-primary" ng-click="saveSkills()">Save</button>
+							<button class="btn" ng-click="cancelSkills()">Cancel</button>
+						</div>
+					</div>
+				</div>
+	    		</div>
+			</div>
+	
+		</div>
+	</script>
+		
+	<div ng-view></div>	
+	
+	</div>
+	
+			
+	
+<script>
+            
+	var usersess = jQuery.parseJSON(sessionStorage.getItem("user"));
+	
+	function acceptInvitation(obj,requestid){
+		
+		var usersess = jQuery.parseJSON(sessionStorage.getItem("user"));
+		
+		$.ajax({
+        method: 'GET',
+        url: "/accept/"+usersess[0].userunkid+"/"+requestid,
+        
+     }).success(function(response){
+     		console.log(response); 
+        });
+		
+	}
+	
+	$.ajax({
+        method: 'GET',
+        url: '/invitations/'+usersess[0].userunkid,
+        
+     }).success(function(response){
+     $("#noInvitations").html(response.data.length);
+     	var apndstr = "<li class='list-group-item'><center><h4>Invitations</h4></center></li>";
+        $(response.data).each(function(key,invitationObj){
+        	apndstr += "<li class='list-group-item container-fluid' id='li-"+invitationObj.userunkid+"'><div class='col-md-6'>"+invitationObj.firstname+" "+invitationObj.lastname+"</div><div class='col-md-6'><button class='btn btn-success' onclick='acceptInvitation(this,"+invitationObj.userunkid+")'><i class='glyphicon glyphicon-ok'></i></button><button class='btn btn-danger' style='margin-left:10px'><i class='glyphicon glyphicon-remove'></i></button></div></li>"; 
+        });
+        
+        $("#divInvitations").html(apndstr);
+    });
+    
+   
+	
+function search(){
+	if(($("#txtSearch").val()) == ""){
+		alert("Invalid Search");
+		return false;
+	}
+	var currenturl = (window.location.href);
+	//if(currenturl.match("search") == null)
+		window.location = (currenturl+"/search");
+}
+
+function logout(){
+
+	$.ajax({
+        method: 'DELETE',
+        url: '/api/session',
+        
+     }).success(function(response){
+       
+        console.log(response);
+        window.location = '/';
+    });
+}
+</script>
+</body>
+</html>
