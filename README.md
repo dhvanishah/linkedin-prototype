@@ -1,7 +1,11 @@
 
 
-# linkedin-1
-
+# linkedin-prototype
+This project is a prototype of LinkedIn developed to understand the concepts of client-server model and REST.
+Technologies Used:
+Frontend: AngularJS, Bootstrap, HTML5, CSS
+Backend: NodeJS
+Database: Mysql
 
 
 ## Usage
